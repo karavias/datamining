@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import gdata.youtube.service 
 from nltk import word_tokenize
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -50,14 +52,26 @@ todo: function tokenize comments.
 '''
 def tokenize(comments):
     tokenComments = []
-    tokenizer = RegexpTokenizer(r'\w+')
     for comment in comments:
-        try:
-            tokenComments.append([word.lower().decode("utf-8-sig").encode("utf-8") for word in tokenizer.tokenize(comment)])
-        except:
-            continue
+        tokenizedComment = tokenizeComment(comment)
+        if len (tokenizedComment) > 0:
+            tokenComments.append(tokenizedComment)
+#            tokenComments.append([word.lower().decode("utf-8-sig").encode("utf-8") for word in tokenizer.tokenize(comment)])
+        
     return tokenComments    
 
+def tokenizeComment(comment):
+    out = []
+    tokenizer = RegexpTokenizer(r'\w+')
+    for word in tokenizer.tokenize(comment):
+        try:
+            out.append(word.lower().decode("utf-8-sig").encode("utf-8"))
+        except:
+            
+            continue
+    return out
+    
+    
 
 '''
 todo: function lemmatize comments.
@@ -103,8 +117,9 @@ wordToRate = read_sentiment_dictionary()
 print(len(wordToRate))
 comments = retrieve_youtube_comments("sRJOU0Fi9Ts")
 tokenComments = tokenize(comments)
-tokenLemmas = lemmatize(tokenComments)
-cleanComments = cleanStopWords(tokenLemmas) 
-score = calculateScore(cleanComments, wordToRate)
+print(tokenComments)
+#tokenLemmas = lemmatize(tokenComments)
+#cleanComments = cleanStopWords(tokenLemmas) 
+#score = calculateScore(cleanComments, wordToRate)
 
-print ("Score is : " + str(score))
+#print ("Score is : " + str(score))
