@@ -1,0 +1,9 @@
+application: 123123123
+version: 1
+runtime: python
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: youtube.application
