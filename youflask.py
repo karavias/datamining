@@ -13,12 +13,14 @@ def searchFormResults():
     wordToRate = dm.read_sentiment_dictionary()            
     print(len(wordToRate))
     comments = dm.retrieve_youtube_comments("sRJOU0Fi9Ts")
+    print("ok")
     tokenComments = dm.tokenize(comments)
     print(tokenComments)
     tokenLemmas = dm.lemmatize(tokenComments)
     cleanComments = dm.cleanStopWords(tokenLemmas) 
-    score = dm.calculateScore(cleanComments, wordToRate)
-    return render_template("searchPage.html", videoScore=score)
+    score, individualScores = dm.calculateScore(cleanComments, wordToRate)
+    print("ind"+ str(individualScores))
+    return render_template("searchPage.html", videoScore=score, pieHtml=dm.generate_pie(individualScores))
 
     
 

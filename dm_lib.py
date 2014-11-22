@@ -7,6 +7,9 @@ import sys
 import numpy
 import pandas as pd
 from nltk.stem.lancaster import LancasterStemmer
+import matplotlib.pyplot as plt, mpld3
+#import mpld3
+from mpld3 import plugins
 #data = fp.read().decode("utf-8-sig").encode("utf-8")
 '''
 todo: function load rating file. Also try to use panda.
@@ -29,22 +32,19 @@ def retrieve_youtube_comments(videoId):
     url = urlpattern % index 
     comments = [] 
     while url: 
+        print("searching")
         try :
             
             ytfeed = yts.GetYouTubeVideoCommentFeed(uri=url) 
             
         except:
             break;
-        #print (ytfeed)
-        for comment in ytfeed.entry:
-            print(comment.published.text)
+        
         comments.extend([comment.content.text for comment in ytfeed.entry ])
-        print("comments? " + str(len(comments)))  
-        #print (ytfeed.GetNextLink())
+        print(len(comments))
         if (not hasattr(ytfeed.GetNextLink(), 'href')):
                     break;
         url = ytfeed.GetNextLink().href 
-        #print url 
     return comments
     
     
@@ -95,6 +95,7 @@ def cleanStopWords(words):
 def calculateScore(commentsTokens, wordToRate):
     commentsSum = 0
     numOfComments = 0
+    individualScores = []
     for comment in commentsTokens:
         
         if len(comment) == 0:
@@ -112,8 +113,9 @@ def calculateScore(commentsTokens, wordToRate):
             numOfComments = numOfComments + 1
             commentMean = commentMean / count
             commentsSum = commentsSum + commentMean
+            individualScores.append(commentMean)
         
-    return commentsSum / numOfComments
+    return (commentsSum / numOfComments, individualScores)
     
     
 def get_top_videos():
@@ -164,6 +166,34 @@ def print_entry_details(entry):
     # show thumbnails
     for thumbnail in entry.media.thumbnail:
         print 'Thumbnail url: %s' % thumbnail.url
+
+def generate_pie(data):
+    total= len(data)
+
+    # The slices will be ordered and plotted counter-clockwise.
+    labels = ['2-3','3-4','4-5', '5-6', '6-7', '7-8','8-9']
+    cathegories=[0 for i in range(7)]
+    for i in range(len(labels)):
+        cathegories[i] = len([x for x in data if x<i+3 and x>i+2 ])
+
+    sizes=[]
+    for cat in cathegories:
+        sizes.append(cat*100/total)
+    colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral','cyan','silver','pink']
+    explode = (0, 0, 0, 0,0,0,0) # only "explode" the 2nd slice (i.e. 'Hogs')
+    """
+    for i in sizes:
+        if i==0:
+            sizes.remove(i)
+            labels.remove()
+    """
+    #fig=plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
+    # Set aspect ratio to be equal so that pie is drawn as a circle.
+    fig, ax = plt.subplots()
+    points = ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
+    plugins.connect(fig, plugins.MousePosition())
+    #mpld3.show()
+    return mpld3.fig_to_html(fig)
 
 if __name__ == "__main__":
     get_top_videos_comments()

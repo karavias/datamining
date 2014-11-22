@@ -8,6 +8,14 @@ from nltk.tokenize import RegexpTokenizer
 import sys
 import numpy
 import pandas as pd
+from collections import Counter
+
+from matplotlib import pyplot
+import matplotlib as mpl
+import numpy as np
+import mpld3
+
+
 yts = gdata.youtube.service.YouTubeService() 
 index = 1 
 
@@ -93,6 +101,7 @@ def cleanStopWords(words):
 def calculateScore(commentsTokens, wordToRate):
     commentsSum = 0
     numOfComments = 0
+    commentsToPlot=[]
     for comment in commentsTokens:
         
         if len(comment) == 0:
@@ -109,9 +118,53 @@ def calculateScore(commentsTokens, wordToRate):
         if atLeastOne:
             numOfComments = numOfComments + 1
             commentMean = commentMean / count
+            commentsToPlot.append(commentMean)
             commentsSum = commentsSum + commentMean
-        
+    print commentsToPlot 
+    heatmap(commentsToPlot,numOfComments,commentsSum / numOfComments)    
     return commentsSum / numOfComments
+
+
+
+def heatmap(commentsToPlot,numOfComments,mean):
+    x=commentsToPlot
+    y=[]
+    '''
+    for i in commentsToPlot:
+        y.append(Counter(i))
+    '''
+    N = numOfComments
+    cmap = mpl.cm.cool
+    norm = mpl.colors.Normalize(vmin=4, vmax=8)
+    fig = pyplot.figure(figsize=(8,3))
+    ax1 = fig.add_axes([0.05, 0.80, 0.9, 0.15])
+    ax2 = fig.add_axes([0.05, 0.475, 0.9, 0.15])
+    cb1 = mpl.colorbar.ColorbarBase(ax1, cmap=cmap,
+                                   norm=norm,
+                                   orientation='horizontal')
+    cb1.set_label('Some Units')
+
+    bounds=[4,5,6,7,8]
+    norm=mpl.colors.BoundaryNorm(bounds, cmap.N)
+    cmap.set_over('0.25')
+    cmap.set_under('0.75')
+
+    # If a ListedColormap is used, the length of the bounds array must be
+    # one greater than the length of the color list.  The bounds must be
+    # monotonically increasing.
+
+    norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+    cb2 = mpl.colorbar.ColorbarBase(ax2, cmap=cmap,
+                                         norm=norm,
+                                         # to use 'extend', you must
+                                         # specify two extra boundaries:
+                                         boundaries=[0]+bounds+[13],
+                                         extend='both',
+                                         ticks=bounds, # optional
+                                         spacing='proportional',
+                                         orientation='horizontal')
+    cb2.set_label('Discrete intervals, some other units')
+    pyplot.show()
     
 wordToRate = read_sentiment_dictionary()            
 print(len(wordToRate))
