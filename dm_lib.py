@@ -117,7 +117,12 @@ def calculateScore(commentsTokens, wordToRate):
         
     return (commentsSum / numOfComments, individualScores)
     
-    
+def get_channel_videos():
+    yt_service = gdata.youtube.service.YouTubeService()
+    query ="https://gdata.youtube.com/feeds/api/channels?q=smosh&start-index=11&max-results=10&v=2&key=rare-citadel-774"
+    feed = yt_service.GetYouTubeVideoFeed(query)
+    print(feed);
+
 def get_top_videos():
     '''
     Get top videos
@@ -196,8 +201,9 @@ def generate_pie(data):
     return mpld3.fig_to_html(fig)
 
 if __name__ == "__main__":
-    get_top_videos_comments()
+    get_channel_videos()
 '''    
+    get_top_videos_comments()
     wordToRate = read_sentiment_dictionary()            
     print(len(wordToRate))
     comments = retrieve_youtube_comments("sRJOU0Fi9Ts")

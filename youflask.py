@@ -4,6 +4,13 @@ import dm_lib as dm
 
 app = Flask(__name__)
 
+
+@app.route("/channel", methods=["POST"])
+def channelResults():
+
+    return render_template("channelPage.html", channelName=request.form['channelName'].upper())
+
+
 @app.route("/search", methods=["GET"])
 def searchForm():
     return render_template("searchPage.html")
@@ -12,7 +19,7 @@ def searchForm():
 def searchFormResults():
     wordToRate = dm.read_sentiment_dictionary()            
     print(len(wordToRate))
-    comments = dm.retrieve_youtube_comments("sRJOU0Fi9Ts")
+    comments = dm.retrieve_youtube_comments(request.form['videoId'])
     print("ok")
     tokenComments = dm.tokenize(comments)
     print(tokenComments)

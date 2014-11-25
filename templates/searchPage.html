@@ -10,6 +10,12 @@ Enter the id of the video you want:
 <input name="videoId" type="text"/>
 <input type="submit" value="go"/>
 </form>
+
+<form method="post" action="/channel">
+Enter the name of the channel:
+<input name="channelName" type="text"/>
+<input type="submit" value="go"/>
+</form>
 {%if videoScore%}
 score is: {{videoScore}}
 graph is: {{pieHtml|safe}}
