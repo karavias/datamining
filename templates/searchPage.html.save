@@ -1,0 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+    <title>CoolTupe</title>
+</head>
+<body>
+    <h1>CoolTube</h1>
+<form method="post" action="/search">
+Enter the id of the video you want:
+
+<input name="videoId" type="text"/>
+</form>
+</body>
+</html>

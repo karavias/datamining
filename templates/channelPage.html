@@ -6,7 +6,13 @@
 <body>
     <h1>{{channelName}} Analytics</h1>
 
-
-
+	{{barchart|safe}}
+	
+	<dl>
+	{% for key, value in individualCharts.iteritems() %}
+		<dt>{{ key|e }}</dt>
+		<dd>{{ value|safe }}</dd>
+	{% endfor %}
+	</dl>
 </body>
 </html>

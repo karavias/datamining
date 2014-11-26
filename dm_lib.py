@@ -7,9 +7,10 @@ import sys
 import numpy
 import pandas as pd
 from nltk.stem.lancaster import LancasterStemmer
-import matplotlib.pyplot as plt, mpld3
-#import mpld3
-from mpld3 import plugins
+import dm_matLib
+import urllib, json
+import time
+
 #data = fp.read().decode("utf-8-sig").encode("utf-8")
 '''
 todo: function load rating file. Also try to use panda.
@@ -17,29 +18,83 @@ todo: function load rating file. Also try to use panda.
 def read_sentiment_dictionary():
     data = pd.read_csv('journal.pone.0026752.s001.txt', sep='\t', usecols = [0, 2])\
                 .set_index('word')['happiness_average'].to_dict()
-
-    return {key: value for key, value in data.items() 
-             if value < 3 or value > 7}
+    
+    minValue = min(data.itervalues())
+    maxValue = max(data.itervalues())
+    return {key: (5*(value - minValue)/(maxValue - minValue))for key, value in data.items() 
+                 if value < 3 or value > 7}
     
     
 '''
 todo: function load youtube comments.
 '''
+def comments_generator(video_id):
+    client = gdata.youtube.service.YouTubeService() 
+    comment_feed = client.GetYouTubeVideoCommentFeed(video_id=video_id)    
+    while comment_feed is not None:
+        for comment in comment_feed.entry:
+            yield comment.content.text
+        next_link = comment_feed.GetNextLink()
+        if next_link is None:
+            comment_feed = None
+        else:
+            try :
+                comment_feed = client.GetYouTubeVideoCommentFeed(next_link.href)
+            except:
+                comment_feed = None
+
+def comment_generator_custom(videoId):
+    '''
+    retrieve all youtube video ids for the given channel    
+    author: the name of the channel
+    '''
+    foundAll = False
+    ind = 1
+    videos = []
+    while not foundAll:
+        urlpattern = 'http://gdata.youtube.com/feeds/api/videos/' + videoId + '/comments?start-index=%d&max-results=50' 
+        url = urlpattern % ind 
+        inp = urllib.urlopen(url)
+       # print(inp.read())
+        try:
+            resp = json.load(inp)
+            inp.close()
+                       
+            returnedVideos = resp['feed']['entry']
+            for video in returnedVideos:
+                videos.append( video ) 
+    
+            ind += 50
+            print len( videos )
+            if ( len( returnedVideos ) < 50 ):
+                foundAll = True
+            
+        except:
+            #catch the case where the number of videos in the channel is a multiple of 50
+            print "error"
+            foundAll = True
+    out = []
+    for video in videos:
+        #print(videos[0]["id"]["$t"].split('videos/')[1])
+        out.append(video["id"]["$t"].split('videos/')[1])
+        
+    return out
+
 def retrieve_youtube_comments(videoId):
     yts = gdata.youtube.service.YouTubeService() 
     index = 1 
-    urlpattern = 'http://gdata.youtube.com/feeds/api/videos/' + videoId + '/comments?start-index=%d&max-results=25' 
+    urlpattern = 'http://gdata.youtube.com/feeds/api/videos/' + videoId + '/comments?start-index=%d&max-results=50' 
     url = urlpattern % index 
     comments = [] 
-    while url: 
-        print("searching")
+    while url:
+        start = time.time()
         try :
             
             ytfeed = yts.GetYouTubeVideoCommentFeed(uri=url) 
             
         except:
             break;
-        
+        print("retrieved in " + str(time.time() - start))
         comments.extend([comment.content.text for comment in ytfeed.entry ])
         print(len(comments))
         if (not hasattr(ytfeed.GetNextLink(), 'href')):
@@ -58,19 +113,22 @@ def tokenize(comments):
         if len (tokenizedComment) > 0:
             tokenComments.append(tokenizedComment)
 #            tokenComments.append([word.lower().decode("utf-8-sig").encode("utf-8") for word in tokenizer.tokenize(comment)])
-        
     return tokenComments    
 
 def tokenizeComment(comment):
     out = []
     tokenizer = RegexpTokenizer(r'\w+')
-    for word in tokenizer.tokenize(comment):
-        try:
-            out.append(word.lower().decode("utf-8-sig").encode("utf-8"))
-        except:
-            
-            continue
-    return out
+    try:
+        for word in tokenizer.tokenize(comment):
+            try:
+                out.append(word.lower().decode("utf-8-sig").encode("utf-8"))
+            except:
+                
+                continue
+        return out
+    except:
+        return []
+    
     
     
 
@@ -116,12 +174,40 @@ def calculateScore(commentsTokens, wordToRate):
             individualScores.append(commentMean)
         
     return (commentsSum / numOfComments, individualScores)
+
+
+def get_channel_videos(author):
+    '''
+    retrieve all youtube video ids for the given channel    
+    author: the name of the channel
+    '''
+    foundAll = False
+    ind = 1
+    videos = []
+    while not foundAll:
+        inp = urllib.urlopen(r'http://gdata.youtube.com/feeds/api/videos?start-index={0}&max-results=50&alt=json&orderby=published&author={1}'.format( ind, author ) )
+        try:
+            resp = json.load(inp)
+            inp.close()
+            returnedVideos = resp['feed']['entry']
+            for video in returnedVideos:
+                videos.append( video ) 
     
-def get_channel_videos():
-    yt_service = gdata.youtube.service.YouTubeService()
-    query ="https://gdata.youtube.com/feeds/api/channels?q=smosh&start-index=11&max-results=10&v=2&key=rare-citadel-774"
-    feed = yt_service.GetYouTubeVideoFeed(query)
-    print(feed);
+            ind += 50
+            print len( videos )
+            if ( len( returnedVideos ) < 50 ):
+                foundAll = True
+        except:
+            #catch the case where the number of videos in the channel is a multiple of 50
+            print "error"
+            foundAll = True
+    out = []
+    for video in videos:
+        #print(videos[0]["id"]["$t"].split('videos/')[1])
+        out.append(video["id"]["$t"].split('videos/')[1])
+        
+    return out
+
 
 def get_top_videos():
     '''
@@ -172,38 +258,15 @@ def print_entry_details(entry):
     for thumbnail in entry.media.thumbnail:
         print 'Thumbnail url: %s' % thumbnail.url
 
-def generate_pie(data):
-    total= len(data)
 
-    # The slices will be ordered and plotted counter-clockwise.
-    labels = ['2-3','3-4','4-5', '5-6', '6-7', '7-8','8-9']
-    cathegories=[0 for i in range(7)]
-    for i in range(len(labels)):
-        cathegories[i] = len([x for x in data if x<i+3 and x>i+2 ])
-
-    sizes=[]
-    for cat in cathegories:
-        sizes.append(cat*100/total)
-    colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral','cyan','silver','pink']
-    explode = (0, 0, 0, 0,0,0,0) # only "explode" the 2nd slice (i.e. 'Hogs')
-    """
-    for i in sizes:
-        if i==0:
-            sizes.remove(i)
-            labels.remove()
-    """
-    #fig=plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
-    # Set aspect ratio to be equal so that pie is drawn as a circle.
-    fig, ax = plt.subplots()
-    points = ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
-    plugins.connect(fig, plugins.MousePosition())
-    #mpld3.show()
-    return mpld3.fig_to_html(fig)
+    
 
 if __name__ == "__main__":
-    get_channel_videos()
-'''    
-    get_top_videos_comments()
+    data = ["afsd123", "sdfwer321", "asdfasasdgf2"]
+    values =[2, 4, 3.3]
+    dm_matLib.generate_histogram(values, data)    
+    '''
+    #get_top_videos_comments()
     wordToRate = read_sentiment_dictionary()            
     print(len(wordToRate))
     comments = retrieve_youtube_comments("sRJOU0Fi9Ts")
@@ -213,4 +276,4 @@ if __name__ == "__main__":
     cleanComments = cleanStopWords(tokenLemmas) 
     score = calculateScore(cleanComments, wordToRate)
     print(score)
-   ''' 
+    '''
