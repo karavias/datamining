@@ -2,7 +2,9 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
 import dm_lib as dm
 import time
+import iovideocache as ioc
 import dm_matLib as dmMat
+
 app = Flask(__name__)
 wordToRate = dm.read_sentiment_dictionary()            
 
@@ -11,24 +13,34 @@ wordToRate = dm.read_sentiment_dictionary()
 def channelResults():
     channelName = request.form['channelName']
     videoToIndividualScores = {}
-    data = {}
     videoIds = []
     videoScores = []
     allVideos = dm.get_channel_videos(channelName)
-    maxResults = 2
-    for videoId in allVideos:
-        print videoId
-        videoIds.append(videoId)
-        score,individualScore = calculateVideoScore(videoId)
-        videoScores.append(score)
-        videoToIndividualScores[videoId] = dmMat.generate_pie(individualScore)
-        maxResults = maxResults-1
-        if maxResults == 0:
-            break
-    print videoIds
+    ch = ioc.load_channel(channelName)
+    if ch is None:
+        ch = ioc.Channel(channelName, [])
+        maxResults = 2
+        for videoId in allVideos:
+            score,individualScore = calculateVideoScore(videoId)
+            if score is None:
+                continue
+            ch.videos.append(ioc.Video(videoId, videoId, score, individualScore))
+
+            maxResults = maxResults-1
+            if maxResults == 0:
+                break
+        ioc.cache_channel(ch)
+    
+    for video in ch.videos:
+        videoIds.append(video.videoId)
+        videoScores.append(video.score)
+        videoToIndividualScores[video.videoId] = video.generate_statistics_pie();
+
+    
     return render_template("channelPage.html", channelName=channelName.upper(),
-                           barchart=dmMat.generate_histogram(videoScores, videoIds),
-                           individualCharts=videoToIndividualScores)
+                           barchart=ch.generate_statistics_bar(),
+                           individualCharts=videoToIndividualScores,
+                           channel=ch)
 
 
 @app.route("/search", methods=["GET"])
@@ -50,6 +62,15 @@ def index():
     
 
 def calculateVideoScore(videoId):
+    '''
+    thsi method calls all the necessary functions to calculate the score
+    a youtube video.
+    1.Retrieving comments
+    2.Tokenizing comments
+    3.Lemmatizing comments
+    4.clearing stop words from comments
+    5.calculating the actual score
+    '''
     start = time.time()
     comments = dm.retrieve_youtube_comments(videoId)
     print ("retrieved comments in : " + str(time.time() - start))
@@ -64,10 +85,10 @@ def calculateVideoScore(videoId):
     print ("cleaned comments in : " + str(time.time() - start))
     start = time.time()
     if len(cleanComments) == 0:
-        return None    
+        return None, None
     score = dm.calculateScore(cleanComments, wordToRate)
     print ("score comments in : " + str(time.time() - start))
     return score
 
 if __name__ == "__main__":
-    app.run()
+   app.run()

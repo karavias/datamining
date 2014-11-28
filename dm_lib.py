@@ -1,10 +1,6 @@
 import gdata.youtube.service 
-from nltk import word_tokenize
-#from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
-import sys
-import numpy
 import pandas as pd
 from nltk.stem.lancaster import LancasterStemmer
 import dm_matLib

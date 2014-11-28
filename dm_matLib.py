@@ -1,8 +1,5 @@
 import numpy as np
-from numpy import pi, sin, linspace
-from matplotlib.mlab import stineman_interp
 import matplotlib.pyplot as plt, mpld3
-#import mpld3
 from mpld3 import plugins
 
 def generate_pie(data):

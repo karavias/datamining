@@ -4,14 +4,14 @@
     <title>CoolTupe</title>
 </head>
 <body>
-    <h1>{{channelName}} Analytics</h1>
+    <h1>{{channel.name.upper()}} Analytics</h1>
 
-	{{barchart|safe}}
+	{{channel.generate_statistics_bar()|safe}}
 	
 	<dl>
-	{% for key, value in individualCharts.iteritems() %}
-		<dt>{{ key|e }}</dt>
-		<dd>{{ value|safe }}</dd>
+	{% for video in channel.videos %}
+		<dt>{{ video.name|e }} : {{video.score}}</dt>
+		<dd>{{ video.generate_statistics_pie()|safe }}</dd>
 	{% endfor %}
 	</dl>
 </body>
