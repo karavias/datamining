@@ -8,9 +8,12 @@
 
 	{{channel.generate_statistics_bar()|safe}}
 	
+	{{channel.generate_table()|safe}}
+	
 	<dl>
 	{% for video in channel.videos %}
-		<dt>{{ video.name|e }} : {{video.score}}</dt>
+		<dt>{{ video.title|e }} : {{video.score}}</dt>
+		<dt><img src="{{video.image|safe}}" style="width:240px;height:200px;"/></dt>
 		<dd>{{ video.generate_statistics_pie()|safe }}</dd>
 	{% endfor %}
 	</dl>

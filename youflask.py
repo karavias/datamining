@@ -11,55 +11,47 @@ wordToRate = dm.read_sentiment_dictionary()
 
 @app.route("/channel", methods=["POST"])
 def channelResults():
+    '''
+    Handler that returns the request for the channels statistics
+    '''
     channelName = request.form['channelName']
-    videoToIndividualScores = {}
-    videoIds = []
-    videoScores = []
-    allVideos = dm.get_channel_videos(channelName)
     ch = ioc.load_channel(channelName)
     if ch is None:
         ch = ioc.Channel(channelName, [])
         maxResults = 2
-        for videoId in allVideos:
-            score,individualScore = calculateVideoScore(videoId)
+        allVideos = dm.get_channel_videos(channelName)
+        for videoAttributes in allVideos:
+            score,individualScore = calculateVideoScore(videoAttributes["id"])
             if score is None:
                 continue
-            ch.videos.append(ioc.Video(videoId, videoId, score, individualScore))
+            ch.videos.append(ioc.Video(videoAttributes["id"], videoAttributes["title"], score, individualScore, videoAttributes["url"], videoAttributes["image"]))
 
             maxResults = maxResults-1
             if maxResults == 0:
                 break
         ioc.cache_channel(ch)
     
-    for video in ch.videos:
-        videoIds.append(video.videoId)
-        videoScores.append(video.score)
-        videoToIndividualScores[video.videoId] = video.generate_statistics_pie();
-
-    
-    return render_template("channelPage.html", channelName=channelName.upper(),
-                           barchart=ch.generate_statistics_bar(),
-                           individualCharts=videoToIndividualScores,
-                           channel=ch)
+    return render_template("channelPage.html", channel=ch)
 
 
 @app.route("/search", methods=["GET"])
+@app.route("/")  
 def searchForm():
+    '''
+    Simple page that displays the search options
+    '''
     return render_template("searchPage.html")
     
 @app.route("/search", methods=["POST"])
 def searchFormResults():
+    '''
+    Handler that returns the request for the video statistics
+    '''
     score, individualScores = calculateVideoScore(request.form['videoId'])
     return render_template("searchPage.html", videoScore=score, pieHtml=dmMat.generate_pie(individualScores))
 
 
-
-#main page of the application
-@app.route("/")    
-def index():
-    
-    return render_template("firstPage.html", a_variable = "teeest")
-    
+   
 
 def calculateVideoScore(videoId):
     '''
@@ -91,4 +83,4 @@ def calculateVideoScore(videoId):
     return score
 
 if __name__ == "__main__":
-   app.run()
+    app.run()

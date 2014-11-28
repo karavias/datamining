@@ -198,9 +198,14 @@ def get_channel_videos(author):
             print "error"
             foundAll = True
     out = []
+    
+
     for video in videos:
         #print(videos[0]["id"]["$t"].split('videos/')[1])
-        out.append(video["id"]["$t"].split('videos/')[1])
+        out.append({"id":video["id"]["$t"].split('videos/')[1],
+                    "title":video['title']['$t'],
+                    "url":video['media$group']['media$player'][0]['url'],
+                    "image":video['media$group']['media$thumbnail'][0]['url']})
         
     return out
 
@@ -258,9 +263,7 @@ def print_entry_details(entry):
     
 
 if __name__ == "__main__":
-    data = ["afsd123", "sdfwer321", "asdfasasdgf2"]
-    values =[2, 4, 3.3]
-    dm_matLib.generate_histogram(values, data)    
+    get_channel_videos("smosh")
     '''
     #get_top_videos_comments()
     wordToRate = read_sentiment_dictionary()            

@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt, mpld3
 from mpld3 import plugins
-
 def generate_pie(data):
     total= len(data)
 
@@ -58,3 +57,4 @@ def generate_histogram(values, labels):
     plugins.connect(fig, plugins.MousePosition())
     return mpld3.fig_to_html(fig)
 #    return mpld3.fig_to_html(fig)
+    
