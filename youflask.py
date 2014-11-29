@@ -10,6 +10,7 @@ from flask import Flask, request, \
 import dm_lib as dm
 import iovideocache as ioc
 import dm_plotlib as dm_plot
+import dm_youtools as youtools
 
 APP_ = Flask(__name__)
 WORLD_TO_RATE = dm.read_sentiment_dictionary()
@@ -23,7 +24,7 @@ def channel_results():
     if channel is None:
         channel = ioc.Channel(channel_name, [])
         max_results = 2
-        all_videos = dm.get_channel_videos(channel_name)
+        all_videos = youtools.get_channel_videos(channel_name)
         for video_attributes in all_videos:
             score, individual_score =\
                 calculate_video_score(video_attributes["id"])
@@ -69,7 +70,7 @@ def calculate_video_score(video_id):
     Keyword arguments:
     video_id -- a string representing the video id
     """
-    comments = dm.retrieve_youtube_comments(video_id)
+    comments = youtools.retrieve_youtube_comments(video_id)
     token_comments = dm.tokenize(comments)
     token_lemmas = dm.lemmatize(token_comments)
     clean_comments = dm.clean_stop_words(token_lemmas)
