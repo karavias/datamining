@@ -1,9 +1,10 @@
-'''
-dm_lib module
+"""
+dm_lib module.
+
 this module implements all the functions necessary
 for loading sentiment dictionaries from files
 and retrieving youtube data
-'''
+"""
 import gdata.youtube.service
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
@@ -15,9 +16,7 @@ import time
 #data = fp.read().decode("utf-8-sig").encode("utf-8")
 
 def read_sentiment_dictionary():
-    '''
-    Calculates the dictionary with words and their sentiment score.
-    '''
+    """Calculate the dictionary with words and their sentiment score."""
     data = pd.read_csv('journal.pone.0026752.s001.txt', sep='\t',\
             usecols=[0, 2]).set_index('word')['happiness_average'].to_dict()
 
@@ -27,48 +26,13 @@ def read_sentiment_dictionary():
                 for key, value in data.items() if value < 3 or value > 7}
 
 
-
-
-def comment_generator_custom(video_id):
-    '''
-    retrieve all youtube video ids for the given channel
-    author: the name of the channel
-    '''
-    found_all = False
-    ind = 1
-    videos = []
-    while not found_all:
-        urlpattern = 'http://gdata.youtube.com/feeds/api/videos/' +\
-                video_id + '/comments?start-index=%d&max-results=50'
-        url = urlpattern % ind
-        inp = urllib.urlopen(url)
-        try:
-            resp = json.load(inp)
-            inp.close()
-            returned_videos = resp['feed']['entry']
-            for video in returned_videos:
-                videos.append(video)
-
-            ind += 50
-            print len(videos)
-            if len(returned_videos) < 50:
-                found_all = True
-
-        except:
-            #catch the case where the number of videos in the channel is a
-            #multiple of 50
-            print "error"
-            found_all = True
-    out = []
-    for video in videos:
-        out.append(video["id"]["$t"].split('videos/')[1])
-
-    return out
-
 def retrieve_youtube_comments(video_id):
-    '''
-    Retrieves youtube comments for the given video.
-    '''
+    """
+    Retrieve youtube comments for the given video.
+
+    Keyword arguments:
+    video_id -- the video for which we want to retrieve the comments
+    """
     yts = gdata.youtube.service.YouTubeService()
     index = 1
     urlpattern = 'http://gdata.youtube.com/feeds/api/videos/' + video_id +\
@@ -89,9 +53,12 @@ def retrieve_youtube_comments(video_id):
 
 
 def tokenize(comments):
-    '''
-    split all youtube video's comments into a lists of tokkens
-    '''
+    """
+    Split all youtube video's comments into a lists of tokkens.
+    
+    Keyword arguments:
+    comments -- The list of strings to tokenize
+    """
     token_comments = []
     for comment in comments:
         tokenized_comment = tokenize_comment(comment)
@@ -100,9 +67,12 @@ def tokenize(comments):
     return token_comments
 
 def tokenize_comment(comment):
-    '''
-    split comment into words/tokkens
-    '''
+    """
+    Split comment into words/tokkens.
+    
+    Keyword arguments:
+    comment -- The comment to tokenize
+    """
     out = []
     tokenizer = RegexpTokenizer(r'\w+')
     try:
@@ -117,9 +87,12 @@ def tokenize_comment(comment):
 
 
 def lemmatize(tokens):
-    '''
-    lemmatize tokens
-    '''
+    """
+    Lematize a list of tokens.
+    
+    Keyword arguments:
+    tokens -- The list of tokens to lemmatize
+    """
     token_lemmas = []
     stemmer = LancasterStemmer()
 
@@ -131,10 +104,12 @@ def lemmatize(tokens):
     return token_lemmas
 
 def clean_stop_words(words):
-    '''
-    take a list of words and remove all the stop words
-    as they are in the english dictionary
-    '''
+    """
+    Clean all stop words from a list of lists of words.
+
+    Keyword arguments:
+    words -- a list of lists of words
+    """
     clean_words = []
     for items in words:
         clean_words.append(\
@@ -142,10 +117,13 @@ def clean_stop_words(words):
     return clean_words
 
 def calculate_score(comments_tokens, word_to_rate):
-    '''
-    Calculates the sentiment score for a youtube video
-    from its comments
-    '''
+    """
+    Calculate the sentiment score for a video.
+    
+    Keyword arguments:
+    comments_tokens -- the tokens from the comments for a video
+    word_to_rate -- the dictionary with the word's rating
+    """
     comments_sum = 0
     num_of_comments = 0
     individual_scores = []
@@ -172,10 +150,12 @@ def calculate_score(comments_tokens, word_to_rate):
 
 
 def get_channel_videos(author):
-    '''
-    retrieve all youtube video ids for the given channel
-    author: the name of the channel
-    '''
+    """
+    Retrieve channel's videos basic information.
+    
+    Keyword arguments:
+    author -- the name of the channel
+    """
     found_all = False
     ind = 1
     videos = []

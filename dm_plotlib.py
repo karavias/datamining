@@ -1,18 +1,24 @@
-'''
-dm_matlib
+"""
+dm_matlib.
+
 This is module that implements the graphs
 needed to display statistics and returns the HTML code to be used
 by the web application
-'''
+"""
 import matplotlib.pyplot as plt, mpld3
 from mpld3 import plugins
 import numpy as np
 def generate_pie(data):
-    '''
+    """
+    Generate a pie chart with the given data.
+
     This function receives a list of floats in a range[0,5]
     and generates a pie chart with their distribution in the
     following ranges [0-1], [1-2], [2-3], [3-4], [4-5]
-    '''
+
+    Keyword arguments:
+    data -- a list of numbers from 0 to 5 to give to the pie.
+    """
     total = len(data)
 
     # The slices will be ordered and plotted counter-clockwise.
@@ -42,10 +48,16 @@ def generate_pie(data):
     return mpld3.fig_to_html(fig)
 
 def generate_histogram(values, labels):
-    '''
+    """
+    Generate a barchart from the given information.
+
     This function receives a list of floats and a list of labels
-    and uses them to generates a barchart histogram
-    '''
+    and uses them to generates a barchart histogram.
+    
+    Keyword arguments:
+    values -- a list of values for each bar of the chart.
+    labels -- a list of labels for each bar of the chart.
+    """
     n_groups = len(values)
 
     fig, axes = plt.subplots()
