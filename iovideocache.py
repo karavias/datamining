@@ -1,8 +1,9 @@
-'''
-iovideocache module
-This module implements the methods for caching
+"""
+iovideocache module.
+
+The module implements the methods for caching
 channel statistics in files and loading them back
-'''
+"""
 import pickle
 #from cStringIO import StringIO
 import os
@@ -10,11 +11,23 @@ import dm_plotlib as dm_plot
 from pandas import DataFrame, set_option, Series
 
 class Video(object):
-    '''
-    class to host the video analytics
-    which are the name, the score, and the individual scores
-    '''
+
+    """
+    Class to host the video analytics.
+    
+    The video analytics are:
+    -the name, the score, and the individual scores
+    """
+
     def __init__(self, video_attributes, mean_score, individual_scores):
+        """
+        Constructor.
+        
+        Keyword arguments:
+        video_attributes -- a dictionary with the basic info of a video
+        mean_score -- the score of the video
+        individual_scores -- a list with scores for videos
+        """
         self.video_id = video_attributes["id"]
         self.title = video_attributes["title"]
         self.score = mean_score
@@ -24,45 +37,46 @@ class Video(object):
         self.date = video_attributes["time"]
 
     def generate_statistics_pie(self):
-        '''
-        generate pie chart representing the rate distribution
-        '''
+        """Generate pie chart representing the rate distribution."""
         return dm_plot.generate_pie(self.individual_scores)
 
     def generate_image_url(self):
-        '''
-        Generates the html code with the image for the video
-        '''
+        """Generate the html code with the image for the video."""
         return "<img src='" + self.image +\
                 "' style='width:200px;height:150px;'/>"
 
     def generate_href(self):
-        '''
-        Generates the html code with the url for the video
-        '''
+        """Generate the html code with the url for the video."""
         return "<a href='" + self.url + "'>" + self.title + "</a>"
 
 class Channel(object):
-    '''
-    class to host the channel analytics which are
-    the name of the channel and a list of video analytics
-    '''
+
+    """
+    Class to host the channel analytics.
+
+    The analytics are:
+    -the name of the channel 
+    -list of video analytics
+    """
+
     def __init__(self, name, videos_statistics):
+        """Constructor.
+
+        Keyword arguments:
+        name -- The name of the channel
+        videos_statistics -- A list of video objects
+        """
         self.name = name
         self.videos = videos_statistics
 
     def generate_statistics_bar(self):
-        '''
-        generate the bar chart representing the history scores
-        '''
+        """Generate the bar chart representing the history scores."""
         return dm_plot.generate_histogram(\
                     [video.score for video in self.videos],\
                     [video.video_id for video in self.videos])
 
     def generate_table(self):
-        '''
-        generate overall statistics
-        '''
+        """Generate overall statistics."""
         data = {}
         set_option('display.max_colwidth', -1)
         for video in self.videos:
@@ -78,26 +92,23 @@ class Channel(object):
 
 
 def cache_channel(channel):
-    '''
-    cache channel analytics into a file
-    '''
+    """Cache channel analytics into a file."""
     pickle.dump(channel, open('cache/' + channel.name, 'wb'))
 
 
 def load_channel(name):
-    '''
-    Try to load channel analytics
-    if channel doesn't exist, then return None
-    '''
+    """
+    Load channel analytics.
+
+    If channel doesn't exist, then returns None
+    """
     if os.path.isfile('cache/' + name):
         return pickle.load(open('cache/' + name, 'rb'))
     return None
 
 
 def remove_comments(text):
-    '''
-    Removes comments from strings that contain
-    '''
+    """Remove comments."""
     text = text.splitlines(True)
     out = ""
     for line in text:

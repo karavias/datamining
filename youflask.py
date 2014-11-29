@@ -1,8 +1,10 @@
-'''
-youflask Module
+"""
+youflask Module.
+
 Implements the web application that handles
 the user's requests
-'''
+"""
+
 from flask import Flask, request, \
      render_template
 import dm_lib as dm
@@ -15,9 +17,7 @@ WORLD_TO_RATE = dm.read_sentiment_dictionary()
 
 @APP_.route("/channel", methods=["POST"])
 def channel_results():
-    '''
-    Handler that returns the request for the channels statistics
-    '''
+    """Handler that returns the request for the channels statistics."""
     channel_name = request.form['channelName']
     channel = ioc.load_channel(channel_name)
     if channel is None:
@@ -42,16 +42,12 @@ def channel_results():
 @APP_.route("/search", methods=["GET"])
 @APP_.route("/")
 def search_form():
-    '''
-    Simple page that displays the search options
-    '''
+    """Simple page that displays the search options."""
     return render_template("searchPage.html")
 
 @APP_.route("/search", methods=["POST"])
 def search_form_results():
-    '''
-    Handler that returns the request for the video statistics
-    '''
+    """Handler that returns the request for the video statistics."""
     video_id = request.form["videoUrl"].split("v=")[1].split("&")[0]
     score, individual_scores = calculate_video_score(video_id)
     return render_template("searchPage.html", videoScore=score,\
@@ -61,15 +57,18 @@ def search_form_results():
 
 
 def calculate_video_score(video_id):
-    '''
-    this method calls all the necessary functions to calculate the score
-    a youtube video.
+    """
+    Calculate the sentiment score for the youtube video.
+
     1.Retrieving comments
     2.Tokenizing comments
     3.Lemmatizing comments
     4.clearing stop words from comments
     5.calculating the actual score
-    '''
+
+    Keyword arguments:
+    video_id -- a string representing the video id
+    """
     comments = dm.retrieve_youtube_comments(video_id)
     token_comments = dm.tokenize(comments)
     token_lemmas = dm.lemmatize(token_comments)
