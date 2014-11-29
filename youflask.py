@@ -20,7 +20,6 @@ WORLD_TO_RATE = dm.read_sentiment_dictionary()
 def channel_results():
     """Handler that returns the request for the channels statistics."""
     channel_name = request.form['channelName']
-    print channel_name
     channel = ioc.load_channel(channel_name)
     if channel is None:
         channel = ioc.Channel(channel_name, [])
