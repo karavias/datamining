@@ -23,7 +23,7 @@ def read_sentiment_dictionary():
     min_value = min(data.itervalues())
     max_value = max(data.itervalues())
     return {key: (5*(value - min_value)/(max_value - min_value))\
-                for key, value in data.items() if value < 3 or value > 7}
+                for key, value in data.items() if value < 3 or value > 6}
 
 
 
