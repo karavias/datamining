@@ -26,17 +26,14 @@ def channel_results():
         all_videos = dm.get_channel_videos(channel_name)
         for video_attributes in all_videos:
             score, individual_score = calculate_video_score(video_attributes["id"])
-            print("score:"+ str(score))
             if score is None:
                 continue
-            print video_attributes
             channel.videos.append(ioc.Video(video_attributes, score, individual_score))
 
             max_results = max_results-1
             if max_results == 0:
                 break
         ioc.cache_channel(channel)
-    print(channel.generate_statistics_bar())
     return render_template("channelPage.html", channel=channel)
 
 
@@ -71,19 +68,13 @@ def calculate_video_score(video_id):
     4.clearing stop words from comments
     5.calculating the actual score
     '''
-    print(1)
     comments = dm.retrieve_youtube_comments(video_id)
-    print(2)
     token_comments = dm.tokenize(comments)
-    print(3)
     token_lemmas = dm.lemmatize(token_comments)
-    print(4)
     clean_comments = dm.clean_stop_words(token_lemmas)
-    print(5)
     if len(clean_comments) == 0:
         return None, None
     score = dm.calculate_score(clean_comments, WORLD_TO_RATE)
-    print(6)
     return score
 
 if __name__ == "__main__":

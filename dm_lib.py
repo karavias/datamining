@@ -22,8 +22,8 @@ def read_sentiment_dictionary():
                 .set_index('word')['happiness_average'].to_dict()
 
     min_value = min(data.itervalues())
-    min_value = max(data.itervalues())
-    return {key: (5*(value - min_value)/(min_value - min_value))for key, value in data.items()\
+    max_value = max(data.itervalues())
+    return {key: (5*(value - min_value)/(max_value - min_value))for key, value in data.items()\
                  if value < 3 or value > 7}
 
 
@@ -123,7 +123,10 @@ def lemmatize(tokens):
     stemmer = LancasterStemmer()
 
     for items in tokens:
-        token_lemmas.append([stemmer.stem(item) for item in items])
+        try:
+            token_lemmas.append([stemmer.stem(item) for item in items])
+        except:
+            continue
     return token_lemmas
 
 def clean_stop_words(words):

@@ -6,6 +6,7 @@ by the web application
 '''
 import matplotlib.pyplot as plt, mpld3
 from mpld3 import plugins
+import numpy as np
 def generate_pie(data):
     '''
     This function receives a list of floats in a range[0,5]
@@ -48,7 +49,7 @@ def generate_histogram(values, labels):
     n_groups = len(values)
 
     fig, axes = plt.subplots()
-    index = range(n_groups + 1)
+    index = np.arange(n_groups)
     bar_width = 0.1
 
     opacity = 0.4
