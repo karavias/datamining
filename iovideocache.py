@@ -6,9 +6,8 @@ channel statistics in files and loading them back
 import pickle
 #from cStringIO import StringIO
 import os
-import dm_matLib as dmMat
+import dm_plotlib as dm_plot
 from pandas import DataFrame, set_option, Series
-import time
 
 class Video(object):
     '''
@@ -28,13 +27,14 @@ class Video(object):
         '''
         generate pie chart representing the rate distribution
         '''
-        return dmMat.generate_pie(self.individual_scores)
+        return dm_plot.generate_pie(self.individual_scores)
 
     def generate_image_url(self):
         '''
         Generates the html code with the image for the video
         '''
-        return "<img src='" + self.image + "' style='width:200px;height:150px;'/>"
+        return "<img src='" + self.image +\
+                "' style='width:200px;height:150px;'/>"
 
     def generate_href(self):
         '''
@@ -55,8 +55,9 @@ class Channel(object):
         '''
         generate the bar chart representing the history scores
         '''
-        return dmMat.generate_histogram([video.score for video in self.videos],\
-                                        [video.video_id for video in self.videos])
+        return dm_plot.generate_histogram(\
+                    [video.score for video in self.videos],\
+                    [video.video_id for video in self.videos])
 
     def generate_table(self):
         '''
@@ -69,7 +70,8 @@ class Channel(object):
             data[video.video_id] = Series([video.generate_href(),\
                 video.score,\
                 video.generate_image_url(),\
-                remove_comments(video.generate_statistics_pie()).replace('\n', ' ')],\
+                remove_comments(video.generate_statistics_pie()).\
+                        replace('\n', ' ')],\
                 index=["Title", "Score", "Image", "Score Distribution"])
         return DataFrame(data).T.to_html(escape=False)
 

@@ -7,7 +7,7 @@ from flask import Flask, request, \
      render_template
 import dm_lib as dm
 import iovideocache as ioc
-import dm_matLib as dmMat
+import dm_plotlib as dm_plot
 
 APP_ = Flask(__name__)
 WORLD_TO_RATE = dm.read_sentiment_dictionary()
@@ -25,10 +25,12 @@ def channel_results():
         max_results = 2
         all_videos = dm.get_channel_videos(channel_name)
         for video_attributes in all_videos:
-            score, individual_score = calculate_video_score(video_attributes["id"])
+            score, individual_score =\
+                calculate_video_score(video_attributes["id"])
             if score is None:
                 continue
-            channel.videos.append(ioc.Video(video_attributes, score, individual_score))
+            channel.videos.append(ioc.Video(video_attributes,\
+                                score, individual_score))
 
             max_results = max_results-1
             if max_results == 0:
@@ -53,7 +55,7 @@ def search_form_results():
     video_id = request.form["videoUrl"].split("v=")[1].split("&")[0]
     score, individual_scores = calculate_video_score(video_id)
     return render_template("searchPage.html", videoScore=score,\
-        pieHtml=dmMat.generate_pie(individual_scores))
+        pieHtml=dm_plot.generate_pie(individual_scores))
 
 
 

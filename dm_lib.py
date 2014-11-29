@@ -18,13 +18,13 @@ def read_sentiment_dictionary():
     '''
     Calculates the dictionary with words and their sentiment score.
     '''
-    data = pd.read_csv('journal.pone.0026752.s001.txt', sep='\t', usecols=[0, 2])\
-                .set_index('word')['happiness_average'].to_dict()
+    data = pd.read_csv('journal.pone.0026752.s001.txt', sep='\t',\
+            usecols=[0, 2]).set_index('word')['happiness_average'].to_dict()
 
     min_value = min(data.itervalues())
     max_value = max(data.itervalues())
-    return {key: (5*(value - min_value)/(max_value - min_value))for key, value in data.items()\
-                 if value < 3 or value > 7}
+    return {key: (5*(value - min_value)/(max_value - min_value))\
+                for key, value in data.items() if value < 3 or value > 7}
 
 
 
@@ -55,7 +55,8 @@ def comment_generator_custom(video_id):
                 found_all = True
 
         except:
-            #catch the case where the number of videos in the channel is a multiple of 50
+            #catch the case where the number of videos in the channel is a
+            #multiple of 50
             print "error"
             found_all = True
     out = []
@@ -136,7 +137,8 @@ def clean_stop_words(words):
     '''
     clean_words = []
     for items in words:
-        clean_words.append([w for w in items if not w in stopwords.words('english')])
+        clean_words.append(\
+                    [w for w in items if not w in stopwords.words('english')])
     return clean_words
 
 def calculate_score(comments_tokens, word_to_rate):
@@ -178,8 +180,9 @@ def get_channel_videos(author):
     ind = 1
     videos = []
     while not found_all:
-        inp = urllib.urlopen((r'http://gdata.youtube.com/feeds/api/videos?start-index={0}'+\
-            '&max-results=50&alt=json&orderby=published&author={1}').format(ind, author))
+        inp = urllib.urlopen((r'http://gdata.youtube.com/feeds/api/videos?'+\
+            'start-index={0}&max-results=50&alt=json&orderby=published&'+\
+            'author={1}').format(ind, author))
         try:
             resp = json.load(inp)
             inp.close()
@@ -192,17 +195,18 @@ def get_channel_videos(author):
             if len(returned_videos) < 50:
                 found_all = True
         except:
-            #catch the case where the number of videos in the channel is a multiple of 50
+            #catch the case where the number of videos in the channel is a 
+            #multiple of 50
             print "error"
             found_all = True
     out = []
     for video in videos:
         out.append({"id":video["id"]["$t"].split('videos/')[1],\
-                    "title":video['title']['$t'],\
-                    "url":video['media$group']['media$player'][0]['url'],\
-                    "image":video['media$group']['media$thumbnail'][0]['url'],\
-                    "time":time.strptime(video["published"]["$t"].split(".")[0],\
-                    "%Y-%m-%dT%H:%M:%S")})
+                "title":video['title']['$t'],\
+                "url":video['media$group']['media$player'][0]['url'],\
+                "image":video['media$group']['media$thumbnail'][0]['url'],\
+                "time":time.strptime(video["published"]["$t"].split(".")[0],\
+                "%Y-%m-%dT%H:%M:%S")})
 
     return out
 
