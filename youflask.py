@@ -1,61 +1,69 @@
-from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash
+'''
+youflask Module
+Implements the web application that handles
+the user's requests
+'''
+from flask import Flask, request, \
+     render_template
 import dm_lib as dm
-import time
 import iovideocache as ioc
 import dm_matLib as dmMat
 
-app = Flask(__name__)
-wordToRate = dm.read_sentiment_dictionary()            
+APP_ = Flask(__name__)
+WORLD_TO_RATE = dm.read_sentiment_dictionary()
 
 
-@app.route("/channel", methods=["POST"])
-def channelResults():
+@APP_.route("/channel", methods=["POST"])
+def channel_results():
     '''
     Handler that returns the request for the channels statistics
     '''
-    channelName = request.form['channelName']
-    ch = ioc.load_channel(channelName)
-    if ch is None:
-        ch = ioc.Channel(channelName, [])
-        maxResults = 2
-        allVideos = dm.get_channel_videos(channelName)
-        for videoAttributes in allVideos:
-            score,individualScore = calculateVideoScore(videoAttributes["id"])
+    channel_name = request.form['channelName']
+    channel = ioc.load_channel(channel_name)
+    if channel is None:
+        channel = ioc.Channel(channel_name, [])
+        max_results = 2
+        all_videos = dm.get_channel_videos(channel_name)
+        for video_attributes in all_videos:
+            score, individual_score = calculate_video_score(video_attributes["id"])
+            print("score:"+ str(score))
             if score is None:
                 continue
-            ch.videos.append(ioc.Video(videoAttributes["id"], videoAttributes["title"], score, individualScore, videoAttributes["url"], videoAttributes["image"]))
+            print video_attributes
+            channel.videos.append(ioc.Video(video_attributes, score, individual_score))
 
-            maxResults = maxResults-1
-            if maxResults == 0:
+            max_results = max_results-1
+            if max_results == 0:
                 break
-        ioc.cache_channel(ch)
-    
-    return render_template("channelPage.html", channel=ch)
+        ioc.cache_channel(channel)
+    print(channel.generate_statistics_bar())
+    return render_template("channelPage.html", channel=channel)
 
 
-@app.route("/search", methods=["GET"])
-@app.route("/")  
-def searchForm():
+@APP_.route("/search", methods=["GET"])
+@APP_.route("/")
+def search_form():
     '''
     Simple page that displays the search options
     '''
     return render_template("searchPage.html")
-    
-@app.route("/search", methods=["POST"])
-def searchFormResults():
+
+@APP_.route("/search", methods=["POST"])
+def search_form_results():
     '''
     Handler that returns the request for the video statistics
     '''
-    score, individualScores = calculateVideoScore(request.form['videoId'])
-    return render_template("searchPage.html", videoScore=score, pieHtml=dmMat.generate_pie(individualScores))
+    video_id = request.form["videoUrl"].split("v=")[1].split("&")[0]
+    score, individual_scores = calculate_video_score(video_id)
+    return render_template("searchPage.html", videoScore=score,\
+        pieHtml=dmMat.generate_pie(individual_scores))
 
 
-   
 
-def calculateVideoScore(videoId):
+
+def calculate_video_score(video_id):
     '''
-    thsi method calls all the necessary functions to calculate the score
+    this method calls all the necessary functions to calculate the score
     a youtube video.
     1.Retrieving comments
     2.Tokenizing comments
@@ -63,24 +71,20 @@ def calculateVideoScore(videoId):
     4.clearing stop words from comments
     5.calculating the actual score
     '''
-    start = time.time()
-    comments = dm.retrieve_youtube_comments(videoId)
-    print ("retrieved comments in : " + str(time.time() - start))
-    start = time.time()    
-    tokenComments = dm.tokenize(comments)
-    print ("tokenized comments in : " + str(time.time() - start))
-    start = time.time()  
-    tokenLemmas = dm.lemmatize(tokenComments)
-    print ("lemmatized comments in : " + str(time.time() - start))
-    start = time.time()  
-    cleanComments = dm.cleanStopWords(tokenLemmas)
-    print ("cleaned comments in : " + str(time.time() - start))
-    start = time.time()
-    if len(cleanComments) == 0:
+    print(1)
+    comments = dm.retrieve_youtube_comments(video_id)
+    print(2)
+    token_comments = dm.tokenize(comments)
+    print(3)
+    token_lemmas = dm.lemmatize(token_comments)
+    print(4)
+    clean_comments = dm.clean_stop_words(token_lemmas)
+    print(5)
+    if len(clean_comments) == 0:
         return None, None
-    score = dm.calculateScore(cleanComments, wordToRate)
-    print ("score comments in : " + str(time.time() - start))
+    score = dm.calculate_score(clean_comments, WORLD_TO_RATE)
+    print(6)
     return score
 
 if __name__ == "__main__":
-    app.run()
+    APP_.run(debug=True)
