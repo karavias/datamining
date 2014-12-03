@@ -6,6 +6,7 @@ This module contains the methods required for retrieving data from youtube.
 import gdata.youtube.service
 import time
 import urllib, json
+import socket
 
 def retrieve_youtube_comments(video_id):
     """
@@ -23,10 +24,10 @@ def retrieve_youtube_comments(video_id):
     while url:
         try:
             ytfeed = yts.GetYouTubeVideoCommentFeed(uri=url)
-
-        except:
+        except (socket.gaierror, gdata.service.RequestError):
             break
         comments.extend([comment.content.text for comment in ytfeed.entry])
+        print (str(len(comments)))        
         if not hasattr(ytfeed.GetNextLink(), 'href'):
             break
         url = ytfeed.GetNextLink().href
@@ -36,7 +37,7 @@ def retrieve_youtube_comments(video_id):
 def get_channel_videos(author):
     """
     Retrieve channel's videos basic information.
-    
+
     Keyword arguments:
     author -- the name of the channel
     """
@@ -59,7 +60,7 @@ def get_channel_videos(author):
             if len(returned_videos) < 50:
                 found_all = True
         except:
-            #catch the case where the number of videos in the channel is a 
+            #catch the case where the number of videos in the channel is a
             #multiple of 50
             print "error"
             found_all = True

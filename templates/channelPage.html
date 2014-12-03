@@ -2,16 +2,22 @@
 <html lang="en">
 <head>
     <title>CoolTupe</title>
+<style>
+
+.dataframe thead, .dataframe th, .mainContainer {
+    background-color:grey;
+}
+
+</style>
 </head>
 <body>
+<div align="center">
+<a href="/search">Go Back</a>
     <h1>{{channel.name.upper()}} Analytics</h1>
-
+<div class="mainContainer">
 	{{channel.generate_statistics_bar()|safe}}
-	
+</div>	
 	{{channel.generate_table()|safe}}
-	
-	<dl>
-	
-	</dl>
+</div>
 </body>
 </html>

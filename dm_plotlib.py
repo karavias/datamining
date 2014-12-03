@@ -8,6 +8,12 @@ by the web application
 import matplotlib.pyplot as plt, mpld3
 from mpld3 import plugins
 import numpy as np
+import time
+from datetime import date
+from matplotlib import ticker
+import datetime
+from dateutil.relativedelta import relativedelta
+
 def generate_pie(data):
     """
     Generate a pie chart with the given data.
@@ -21,7 +27,7 @@ def generate_pie(data):
     """
     total = len(data)
 
-    # The slices will be ordered and plotted counter-clockwise.
+    # The slices will be ordered and plotted counter clockwise.
     labels = ['0-1', '1-2', '2-3', '3-4', '4-5']
     cathegories = [0 for i in range(5)]
     for i in range(len(labels)):
@@ -44,10 +50,9 @@ def generate_pie(data):
 
     axes.pie(sizes, explode=explode, labels=labels, \
         colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
-    plugins.connect(fig, plugins.MousePosition())
     return mpld3.fig_to_html(fig)
 
-def generate_histogram(values, labels):
+def generate_histogram(dates, values, labels):
     """
     Generate a barchart from the given information.
 
@@ -58,27 +63,32 @@ def generate_histogram(values, labels):
     values -- a list of values for each bar of the chart.
     labels -- a list of labels for each bar of the chart.
     """
-    n_groups = len(values)
+    #n_groups = len(values)
+
 
     fig, axes = plt.subplots()
-    index = np.arange(n_groups)
-    bar_width = 0.1
-
-    opacity = 0.4
+    axes.plot(dates, values, 'o--')
+    plt.ylim([0, 5])
+    one_mon_rel = relativedelta(months=1)
+    plt.xlim([min(dates), max(dates) + one_mon_rel])
     fig.set_size_inches(12, 5)
-    plt.bar(index, values, bar_width,
-                     alpha=opacity,
-                     color='b',
-                     label=labels)
-
     plt.xlabel('Videos through time')
     plt.ylabel('Mean video scores')
     plt.title('Channel\'s video progress through time')
-    plt.xticks(index + bar_width/2, labels)
     plt.legend()
-
     plt.tight_layout()
-    plt.ylim([0, 5])
+    #for label, x, y in zip(labels, dates, values):
+    #    plt.annotate(
+    #        label, 
+    #        xy = (x, y), xytext = (-20, 20),
+    #        textcoords = 'offset points', ha = 'center', va = 'center',
+    #        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
+    #        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))    
+    return mpld3.fig_to_html(fig)    
 
-    plugins.connect(fig, plugins.MousePosition())
-    return mpld3.fig_to_html(fig)
+def f(t):
+    return np.exp(-t) * np.cos(2*np.pi*t)
+
+
+if __name__ == "__main__":
+    generate_awsome_plot()

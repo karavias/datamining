@@ -11,6 +11,9 @@ import dm_lib as dm
 import iovideocache as ioc
 import dm_plotlib as dm_plot
 import dm_youtools as youtools
+import cPickle as pickle
+import json
+
 
 APP_ = Flask(__name__)
 WORLD_TO_RATE = dm.read_sentiment_dictionary()
@@ -23,9 +26,12 @@ def channel_results():
     channel = ioc.load_channel(channel_name)
     if channel is None:
         channel = ioc.Channel(channel_name, [])
-        max_results = 2
+        
         all_videos = youtools.get_channel_videos(channel_name)
+        count = 0
         for video_attributes in all_videos:
+            count = count + 1
+            print("calculating : " + str(count) + " of " + str(len(all_videos)))
             score, individual_score =\
                 calculate_video_score(video_attributes["id"])
             if score is None:
@@ -33,9 +39,7 @@ def channel_results():
             channel.videos.append(ioc.Video(video_attributes,\
                                 score, individual_score))
 
-            max_results = max_results-1
-            if max_results == 0:
-                break
+            
         ioc.cache_channel(channel)
     return render_template("channelPage.html", channel=channel)
 
@@ -70,14 +74,40 @@ def calculate_video_score(video_id):
     Keyword arguments:
     video_id -- a string representing the video id
     """
+    
+    print("1")
+    #testComments = ["awfully awsome", "extraordinary the"]
     comments = youtools.retrieve_youtube_comments(video_id)
+    print("2")    
     token_comments = dm.tokenize(comments)
-    token_lemmas = dm.lemmatize(token_comments)
-    clean_comments = dm.clean_stop_words(token_lemmas)
+    print("3")    
+    clean_comments = dm.clean_stop_words(token_comments)
+    print("5")    
     if len(clean_comments) == 0:
         return None, None
     score = dm.calculate_score(clean_comments, WORLD_TO_RATE)
     return score
 
+
+
 if __name__ == "__main__":
-    APP_.run(debug=True)
+    #print calculate_video_score("aDMMEGBpoUs")
+    
+    channel_name = "nigahiga"
+    channel = ioc.load_channel(channel_name)
+    print("nigahiga")
+    count = 0
+    if channel is None:
+        channel = ioc.Channel(channel_name, [])
+        all_videos = youtools.get_channel_videos(channel_name)
+        for video_attributes in all_videos:
+            count = count + 1
+            print("calculating : " + str(count) + " of " + str(len(all_videos)))
+            video_attributes["comments"] = youtools.retrieve_youtube_comments(video_attributes["id"])
+            with open('cache/videos/' + video_attributes["id"], 'w') as outfile:
+                pickle.dump(video_attributes, outfile)
+
+        
+    
+    #APP_.run(debug=True)
+

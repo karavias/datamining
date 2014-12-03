@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 import pandas as pd
 from nltk.stem.lancaster import LancasterStemmer
+from nltk.stem import WordNetLemmatizer
 
 
 
@@ -30,7 +31,7 @@ def read_sentiment_dictionary():
 def tokenize(comments):
     """
     Split all youtube video's comments into a lists of tokkens.
-    
+
     Keyword arguments:
     comments -- The list of strings to tokenize
     """
@@ -44,38 +45,34 @@ def tokenize(comments):
 def tokenize_comment(comment):
     """
     Split comment into words/tokkens.
-    
+
     Keyword arguments:
     comment -- The comment to tokenize
     """
+    if comment is None:
+        return []
     out = []
     tokenizer = RegexpTokenizer(r'\w+')
-    try:
-        for word in tokenizer.tokenize(comment):
-            try:
-                out.append(word.lower().decode("utf-8-sig").encode("utf-8"))
-            except:
-                continue
-        return out
-    except:
-        return []
+    for word in tokenizer.tokenize(comment):
+        try:
+            out.append(word.lower().decode("utf-8-sig").encode("utf-8"))
+        except UnicodeDecodeError:
+            continue
+    return out
 
 
 def lemmatize(tokens):
     """
     Lematize a list of tokens.
-    
+
     Keyword arguments:
     tokens -- The list of tokens to lemmatize
     """
     token_lemmas = []
-    stemmer = LancasterStemmer()
-
+    #stemmer = LancasterStemmer()
+    lemm = WordNetLemmatizer()
     for items in tokens:
-        try:
-            token_lemmas.append([stemmer.stem(item) for item in items])
-        except:
-            continue
+        token_lemmas.append([lemm.lemmatize(item) for item in items])
     return token_lemmas
 
 def clean_stop_words(words):
@@ -94,7 +91,7 @@ def clean_stop_words(words):
 def calculate_score(comments_tokens, word_to_rate):
     """
     Calculate the sentiment score for a video.
-    
+
     Keyword arguments:
     comments_tokens -- the tokens from the comments for a video
     word_to_rate -- the dictionary with the word's rating
@@ -102,18 +99,22 @@ def calculate_score(comments_tokens, word_to_rate):
     comments_sum = 0
     num_of_comments = 0
     individual_scores = []
+    lemm = WordNetLemmatizer()
     for comment in comments_tokens:
 
         if len(comment) == 0:
             continue
         comment_mean = 0
         count = 0
+        at_least_one = False
         for word in comment:
-            at_least_one = False
-
             if word in word_to_rate:
                 at_least_one = True
                 comment_mean = comment_mean + float(word_to_rate[word])
+                count = count + 1
+            elif lemm.lemmatize(word) in word_to_rate:
+                at_least_one = True
+                comment_mean = comment_mean + float(word_to_rate[lemm.lemmatize(word)])
                 count = count + 1
         if at_least_one:
             num_of_comments = num_of_comments + 1
@@ -125,4 +126,5 @@ def calculate_score(comments_tokens, word_to_rate):
 
 
 if __name__ == "__main__":
-    get_channel_videos("smosh")
+    print "ok"
+    #get_channel_videos("smosh")

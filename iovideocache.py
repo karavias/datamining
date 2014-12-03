@@ -9,6 +9,9 @@ import pickle
 import os
 import dm_plotlib as dm_plot
 from pandas import DataFrame, set_option, Series
+from time import mktime
+from datetime import datetime
+import re
 
 class Video(object):
 
@@ -72,8 +75,9 @@ class Channel(object):
     def generate_statistics_bar(self):
         """Generate the bar chart representing the history scores."""
         return dm_plot.generate_histogram(\
+                    [datetime.fromtimestamp(mktime(video.date)) for video in self.videos],\
                     [video.score for video in self.videos],\
-                    [video.video_id for video in self.videos])
+                    [video.title for video in self.videos])
 
     def generate_table(self):
         """Generate overall statistics."""
@@ -81,11 +85,11 @@ class Channel(object):
         set_option('display.max_colwidth', -1)
         for video in self.videos:
 #time.strftime("%B %d, %Y", video.date)
-            data[video.video_id] = Series([video.generate_href(),\
+            data[datetime.fromtimestamp(mktime(video.date))] = Series([video.generate_href(),\
                 video.score,\
                 video.generate_image_url(),\
                 remove_comments(video.generate_statistics_pie()).\
-                        replace('\n', ' ')],\
+                        replace('\n', '')],\
                 index=["Title", "Score", "Image", "Score Distribution"])
         return DataFrame(data).T.to_html(escape=False)
 
@@ -107,15 +111,22 @@ def load_channel(name):
     return None
 
 
-def remove_comments(text):
-    """Remove comments."""
-    text = text.splitlines(True)
-    out = ""
-    for line in text:
-        out = out + line.split("//")[0]
-    return out
+    
+def remove_comments(string):
+    pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
+    # first group captures quoted strings (double or single)
+    # second group captures comments (//single-line or /* multi-line */)
+    regex = re.compile(pattern, re.MULTILINE|re.DOTALL)
+    def _replacer(match):
+        # if the 2nd group (capturing comments) is not None,
+        # it means we have captured a non-quoted (real) comment string.
+        if match.group(2) is not None:
+            return "" # so we will return empty to remove the comment
+        else: # otherwise, we will return the 1st group
+            return match.group(1) # captured quoted-string
+    return regex.sub(_replacer, string)
 
 
 if __name__ == "__main__":
-    CHANNEL_ = load_channel("smosh")
-    print CHANNEL_.generate_table()
+    CHANNEL_ = load_channel("nigahiga")
+    CHANNEL_.generate_table()
