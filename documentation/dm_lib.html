@@ -1,0 +1,64 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dm_lib</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>dm_lib</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/karavias/dtu/project2/dm_lib.py">/home/karavias/dtu/project2/dm_lib.py</a></font></td></tr></table>
+    <p><tt>dm_lib&nbsp;module.<br>
+&nbsp;<br>
+this&nbsp;module&nbsp;implements&nbsp;all&nbsp;the&nbsp;functions&nbsp;necessary<br>
+for&nbsp;loading&nbsp;sentiment&nbsp;dictionaries&nbsp;from&nbsp;files<br>
+and&nbsp;retrieving&nbsp;youtube&nbsp;data</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="lib_speed.html">lib_speed</a><br>
+</td><td width="25%" valign=top><a href="pandas.html">pandas</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-calculate_score"><strong>calculate_score</strong></a>(*args, **kwargs)</dt><dd><tt>Calculate&nbsp;the&nbsp;sentiment&nbsp;score&nbsp;for&nbsp;a&nbsp;video.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+comments_tokens&nbsp;--&nbsp;the&nbsp;tokens&nbsp;from&nbsp;the&nbsp;comments&nbsp;for&nbsp;a&nbsp;video<br>
+word_to_rate&nbsp;--&nbsp;the&nbsp;dictionary&nbsp;with&nbsp;the&nbsp;word's&nbsp;rating</tt></dd></dl>
+ <dl><dt><a name="-clean_stop_words"><strong>clean_stop_words</strong></a>(*args, **kwargs)</dt><dd><tt>Clean&nbsp;all&nbsp;stop&nbsp;words&nbsp;from&nbsp;a&nbsp;list&nbsp;of&nbsp;lists&nbsp;of&nbsp;words.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+words&nbsp;--&nbsp;a&nbsp;list&nbsp;of&nbsp;lists&nbsp;of&nbsp;words</tt></dd></dl>
+ <dl><dt><a name="-lemmatize"><strong>lemmatize</strong></a>(*args, **kwargs)</dt><dd><tt>Lematize&nbsp;a&nbsp;list&nbsp;of&nbsp;tokens.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+tokens&nbsp;--&nbsp;The&nbsp;list&nbsp;of&nbsp;tokens&nbsp;to&nbsp;lemmatize</tt></dd></dl>
+ <dl><dt><a name="-read_sentiment_dictionary"><strong>read_sentiment_dictionary</strong></a>(*args, **kwargs)</dt><dd><tt>Calculate&nbsp;the&nbsp;dictionary&nbsp;with&nbsp;words&nbsp;and&nbsp;their&nbsp;sentiment&nbsp;score.</tt></dd></dl>
+ <dl><dt><a name="-tokenize"><strong>tokenize</strong></a>(*args, **kwargs)</dt><dd><tt>Split&nbsp;all&nbsp;youtube&nbsp;video's&nbsp;comments&nbsp;into&nbsp;a&nbsp;lists&nbsp;of&nbsp;tokkens.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+comments&nbsp;--&nbsp;The&nbsp;list&nbsp;of&nbsp;strings&nbsp;to&nbsp;tokenize</tt></dd></dl>
+ <dl><dt><a name="-tokenize_comment"><strong>tokenize_comment</strong></a>(*args, **kwargs)</dt><dd><tt>Split&nbsp;comment&nbsp;into&nbsp;words/tokkens.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+comment&nbsp;--&nbsp;The&nbsp;comment&nbsp;to&nbsp;tokenize</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>stopwords</strong> = &lt;WordListCorpusReader in u'/home/karavias/nltk_data/corpora/stopwords'&gt;</td></tr></table>
+</body></html>

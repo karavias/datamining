@@ -1,0 +1,137 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module iovideocache</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>iovideocache</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/karavias/dtu/project2/iovideocache.py">/home/karavias/dtu/project2/iovideocache.py</a></font></td></tr></table>
+    <p><tt>iovideocache&nbsp;module.<br>
+&nbsp;<br>
+The&nbsp;module&nbsp;implements&nbsp;the&nbsp;methods&nbsp;for&nbsp;caching<br>
+channel&nbsp;statistics&nbsp;in&nbsp;files&nbsp;and&nbsp;loading&nbsp;them&nbsp;back</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dm_plotlib.html">dm_plotlib</a><br>
+<a href="lib_speed.html">lib_speed</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<a href="pickle.html">pickle</a><br>
+</td><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="__builtin__.html#object">__builtin__.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="iovideocache.html#Channel">Channel</a>
+</font></dt><dt><font face="helvetica, arial"><a href="iovideocache.html#Video">Video</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Channel">class <strong>Channel</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Class&nbsp;to&nbsp;host&nbsp;the&nbsp;channel&nbsp;analytics.<br>
+&nbsp;<br>
+The&nbsp;analytics&nbsp;are:<br>
+-the&nbsp;name&nbsp;of&nbsp;the&nbsp;channel<br>
+-list&nbsp;of&nbsp;video&nbsp;analytics<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Channel-__init__"><strong>__init__</strong></a>(self, name, videos_statistics)</dt><dd><tt>Constructor.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+name&nbsp;--&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;channel<br>
+videos_statistics&nbsp;--&nbsp;A&nbsp;list&nbsp;of&nbsp;video&nbsp;objects</tt></dd></dl>
+
+<dl><dt><a name="Channel-generate_statistics_bar"><strong>generate_statistics_bar</strong></a>(self)</dt><dd><tt>Generate&nbsp;the&nbsp;bar&nbsp;chart&nbsp;representing&nbsp;the&nbsp;history&nbsp;scores.</tt></dd></dl>
+
+<dl><dt><a name="Channel-generate_table"><strong>generate_table</strong></a>(self)</dt><dd><tt>Generate&nbsp;overall&nbsp;statistics.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Video">class <strong>Video</strong></a>(<a href="__builtin__.html#object">__builtin__.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Class&nbsp;to&nbsp;host&nbsp;the&nbsp;video&nbsp;analytics.<br>
+&nbsp;<br>
+The&nbsp;video&nbsp;analytics&nbsp;are:<br>
+-the&nbsp;name,&nbsp;the&nbsp;score,&nbsp;and&nbsp;the&nbsp;individual&nbsp;scores<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Video-__init__"><strong>__init__</strong></a>(self, video_attributes, mean_score, individual_scores)</dt><dd><tt>Constructor.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+video_attributes&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;with&nbsp;the&nbsp;basic&nbsp;info&nbsp;of&nbsp;a&nbsp;video<br>
+mean_score&nbsp;--&nbsp;the&nbsp;score&nbsp;of&nbsp;the&nbsp;video<br>
+individual_scores&nbsp;--&nbsp;a&nbsp;list&nbsp;with&nbsp;scores&nbsp;for&nbsp;videos</tt></dd></dl>
+
+<dl><dt><a name="Video-generate_href"><strong>generate_href</strong></a>(self)</dt><dd><tt>Generate&nbsp;the&nbsp;html&nbsp;code&nbsp;with&nbsp;the&nbsp;url&nbsp;for&nbsp;the&nbsp;video.</tt></dd></dl>
+
+<dl><dt><a name="Video-generate_image_url"><strong>generate_image_url</strong></a>(self)</dt><dd><tt>Generate&nbsp;the&nbsp;html&nbsp;code&nbsp;with&nbsp;the&nbsp;image&nbsp;for&nbsp;the&nbsp;video.</tt></dd></dl>
+
+<dl><dt><a name="Video-generate_statistics_pie"><strong>generate_statistics_pie</strong></a>(self)</dt><dd><tt>Generate&nbsp;pie&nbsp;chart&nbsp;representing&nbsp;the&nbsp;rate&nbsp;distribution.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-cache_channel"><strong>cache_channel</strong></a>(*args, **kwargs)</dt><dd><tt>Cache&nbsp;channel&nbsp;analytics&nbsp;into&nbsp;a&nbsp;file.</tt></dd></dl>
+ <dl><dt><a name="-load_channel"><strong>load_channel</strong></a>(*args, **kwargs)</dt><dd><tt>Load&nbsp;channel&nbsp;analytics.<br>
+&nbsp;<br>
+If&nbsp;channel&nbsp;doesn't&nbsp;exist,&nbsp;then&nbsp;returns&nbsp;None</tt></dd></dl>
+ <dl><dt><a name="-mktime"><strong>mktime</strong></a>(...)</dt><dd><tt><a href="#-mktime">mktime</a>(tuple)&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;time&nbsp;tuple&nbsp;in&nbsp;local&nbsp;time&nbsp;to&nbsp;seconds&nbsp;since&nbsp;the&nbsp;Epoch.</tt></dd></dl>
+ <dl><dt><a name="-remove_comments"><strong>remove_comments</strong></a>(*args, **kwargs)</dt><dd><tt>Remove&nbsp;comments&nbsp;from&nbsp;javascript&nbsp;code.<br>
+&nbsp;<br>
+Identifies&nbsp;/*&nbsp;*/&nbsp;and&nbsp;//&nbsp;comments&nbsp;and&nbsp;removes&nbsp;them&nbsp;correctly.<br>
+Handles&nbsp;situation&nbsp;when&nbsp;these&nbsp;letters&nbsp;appear&nbsp;inside&nbsp;strings.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>set_option</strong> = &lt;pandas.core.config.CallableDynamicDoc object&gt;</td></tr></table>
+</body></html>
