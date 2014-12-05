@@ -11,14 +11,13 @@ import dm_lib as dm
 import iovideocache as ioc
 import dm_plotlib as dm_plot
 import dm_youtools as youtools
-import cPickle as pickle
-import json
+import lib_speed as ls
 
 
 APP_ = Flask(__name__)
 WORLD_TO_RATE = dm.read_sentiment_dictionary()
 
-
+@ls.reset_calculate
 @APP_.route("/channel", methods=["POST"])
 def channel_results():
     """Handler that returns the request for the channels statistics."""
@@ -26,12 +25,14 @@ def channel_results():
     channel = ioc.load_channel(channel_name)
     if channel is None:
         channel = ioc.Channel(channel_name, [])
-        
+
         all_videos = youtools.get_channel_videos(channel_name)
         count = 0
-        for video_attributes in all_videos:
+        #calculate the score for only the 5 first videos
+        #to ensure the time will be acceptable
+        for index in range(min(5, len(all_videos))):
+            video_attributes = all_videos[index]
             count = count + 1
-            print("calculating : " + str(count) + " of " + str(len(all_videos)))
             score, individual_score =\
                 calculate_video_score(video_attributes["id"])
             if score is None:
@@ -39,17 +40,18 @@ def channel_results():
             channel.videos.append(ioc.Video(video_attributes,\
                                 score, individual_score))
 
-            
         ioc.cache_channel(channel)
-    return render_template("channelPage.html", channel=channel)
+    return render_template("channelPage.html", channel=channel,\
+                    stats=ls.get_speed_means())
 
-
+@ls.reset_calculate
 @APP_.route("/search", methods=["GET"])
 @APP_.route("/")
 def search_form():
     """Simple page that displays the search options."""
     return render_template("searchPage.html")
 
+@ls.reset_calculate
 @APP_.route("/search", methods=["POST"])
 def search_form_results():
     """Handler that returns the request for the video statistics."""
@@ -59,8 +61,7 @@ def search_form_results():
         pieHtml=dm_plot.generate_pie(individual_scores))
 
 
-
-
+@ls.speed_calculate
 def calculate_video_score(video_id):
     """
     Calculate the sentiment score for the youtube video.
@@ -74,40 +75,17 @@ def calculate_video_score(video_id):
     Keyword arguments:
     video_id -- a string representing the video id
     """
-    
-    print("1")
-    #testComments = ["awfully awsome", "extraordinary the"]
     comments = youtools.retrieve_youtube_comments(video_id)
-    print("2")    
     token_comments = dm.tokenize(comments)
-    print("3")    
     clean_comments = dm.clean_stop_words(token_comments)
-    print("5")    
     if len(clean_comments) == 0:
         return None, None
     score = dm.calculate_score(clean_comments, WORLD_TO_RATE)
+
     return score
 
 
 
 if __name__ == "__main__":
-    #print calculate_video_score("aDMMEGBpoUs")
-    
-    channel_name = "nigahiga"
-    channel = ioc.load_channel(channel_name)
-    print("nigahiga")
-    count = 0
-    if channel is None:
-        channel = ioc.Channel(channel_name, [])
-        all_videos = youtools.get_channel_videos(channel_name)
-        for video_attributes in all_videos:
-            count = count + 1
-            print("calculating : " + str(count) + " of " + str(len(all_videos)))
-            video_attributes["comments"] = youtools.retrieve_youtube_comments(video_attributes["id"])
-            with open('cache/videos/' + video_attributes["id"], 'w') as outfile:
-                pickle.dump(video_attributes, outfile)
-
-        
-    
-    #APP_.run(debug=True)
+    APP_.run(debug=True)
 

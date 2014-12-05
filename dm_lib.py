@@ -9,13 +9,12 @@ and retrieving youtube data
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 import pandas as pd
-from nltk.stem.lancaster import LancasterStemmer
 from nltk.stem import WordNetLemmatizer
 
-
+import lib_speed as ls
 
 #data = fp.read().decode("utf-8-sig").encode("utf-8")
-
+@ls.speed_calculate
 def read_sentiment_dictionary():
     """Calculate the dictionary with words and their sentiment score."""
     data = pd.read_csv('journal.pone.0026752.s001.txt', sep='\t',\
@@ -27,7 +26,7 @@ def read_sentiment_dictionary():
                 for key, value in data.items() if value < 3 or value > 6}
 
 
-
+@ls.speed_calculate
 def tokenize(comments):
     """
     Split all youtube video's comments into a lists of tokkens.
@@ -42,6 +41,7 @@ def tokenize(comments):
             token_comments.append(tokenized_comment)
     return token_comments
 
+@ls.speed_calculate
 def tokenize_comment(comment):
     """
     Split comment into words/tokkens.
@@ -60,7 +60,7 @@ def tokenize_comment(comment):
             continue
     return out
 
-
+@ls.speed_calculate
 def lemmatize(tokens):
     """
     Lematize a list of tokens.
@@ -75,6 +75,7 @@ def lemmatize(tokens):
         token_lemmas.append([lemm.lemmatize(item) for item in items])
     return token_lemmas
 
+@ls.speed_calculate
 def clean_stop_words(words):
     """
     Clean all stop words from a list of lists of words.
@@ -88,6 +89,7 @@ def clean_stop_words(words):
                     [w for w in items if not w in stopwords.words('english')])
     return clean_words
 
+@ls.speed_calculate
 def calculate_score(comments_tokens, word_to_rate):
     """
     Calculate the sentiment score for a video.
@@ -112,9 +114,10 @@ def calculate_score(comments_tokens, word_to_rate):
                 at_least_one = True
                 comment_mean = comment_mean + float(word_to_rate[word])
                 count = count + 1
-            elif lemm.lemmatize(word) in word_to_rate:
+            elif lemm.lemmatize(word.decode('utf-8')) in word_to_rate:
                 at_least_one = True
-                comment_mean = comment_mean + float(word_to_rate[lemm.lemmatize(word)])
+                comment_mean = comment_mean + float(word_to_rate\
+                [lemm.lemmatize(word)])
                 count = count + 1
         if at_least_one:
             num_of_comments = num_of_comments + 1

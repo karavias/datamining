@@ -7,7 +7,9 @@ import gdata.youtube.service
 import time
 import urllib, json
 import socket
+import lib_speed as ls
 
+@ls.speed_calculate
 def retrieve_youtube_comments(video_id):
     """
     Retrieve youtube comments for the given video.
@@ -27,13 +29,12 @@ def retrieve_youtube_comments(video_id):
         except (socket.gaierror, gdata.service.RequestError):
             break
         comments.extend([comment.content.text for comment in ytfeed.entry])
-        print (str(len(comments)))        
         if not hasattr(ytfeed.GetNextLink(), 'href'):
             break
         url = ytfeed.GetNextLink().href
     return comments
 
-
+@ls.speed_calculate
 def get_channel_videos(author):
     """
     Retrieve channel's videos basic information.

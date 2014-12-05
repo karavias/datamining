@@ -6,13 +6,8 @@ needed to display statistics and returns the HTML code to be used
 by the web application
 """
 import matplotlib.pyplot as plt, mpld3
-from mpld3 import plugins
-import numpy as np
-import time
-from datetime import date
-from matplotlib import ticker
-import datetime
 from dateutil.relativedelta import relativedelta
+
 
 def generate_pie(data):
     """
@@ -52,13 +47,14 @@ def generate_pie(data):
         colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
     return mpld3.fig_to_html(fig)
 
-def generate_histogram(dates, values, labels):
+
+def generate_histogram(dates, values):
     """
     Generate a barchart from the given information.
 
     This function receives a list of floats and a list of labels
     and uses them to generates a barchart histogram.
-    
+
     Keyword arguments:
     values -- a list of values for each bar of the chart.
     labels -- a list of labels for each bar of the chart.
@@ -77,18 +73,6 @@ def generate_histogram(dates, values, labels):
     plt.title('Channel\'s video progress through time')
     plt.legend()
     plt.tight_layout()
-    #for label, x, y in zip(labels, dates, values):
-    #    plt.annotate(
-    #        label, 
-    #        xy = (x, y), xytext = (-20, 20),
-    #        textcoords = 'offset points', ha = 'center', va = 'center',
-    #        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
-    #        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))    
-    return mpld3.fig_to_html(fig)    
 
-def f(t):
-    return np.exp(-t) * np.cos(2*np.pi*t)
+    return mpld3.fig_to_html(fig)
 
-
-if __name__ == "__main__":
-    generate_awsome_plot()

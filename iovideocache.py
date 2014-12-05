@@ -12,12 +12,13 @@ from pandas import DataFrame, set_option, Series
 from time import mktime
 from datetime import datetime
 import re
+import lib_speed as ls
 
 class Video(object):
 
     """
     Class to host the video analytics.
-    
+
     The video analytics are:
     -the name, the score, and the individual scores
     """
@@ -25,7 +26,7 @@ class Video(object):
     def __init__(self, video_attributes, mean_score, individual_scores):
         """
         Constructor.
-        
+
         Keyword arguments:
         video_attributes -- a dictionary with the basic info of a video
         mean_score -- the score of the video
@@ -58,7 +59,7 @@ class Channel(object):
     Class to host the channel analytics.
 
     The analytics are:
-    -the name of the channel 
+    -the name of the channel
     -list of video analytics
     """
 
@@ -75,9 +76,9 @@ class Channel(object):
     def generate_statistics_bar(self):
         """Generate the bar chart representing the history scores."""
         return dm_plot.generate_histogram(\
-                    [datetime.fromtimestamp(mktime(video.date)) for video in self.videos],\
-                    [video.score for video in self.videos],\
-                    [video.title for video in self.videos])
+                    [datetime.fromtimestamp(mktime(video.date))\
+                    for video in self.videos],\
+                    [video.score for video in self.videos])
 
     def generate_table(self):
         """Generate overall statistics."""
@@ -85,7 +86,8 @@ class Channel(object):
         set_option('display.max_colwidth', -1)
         for video in self.videos:
 #time.strftime("%B %d, %Y", video.date)
-            data[datetime.fromtimestamp(mktime(video.date))] = Series([video.generate_href(),\
+            data[datetime.fromtimestamp(mktime(video.date))] = \
+                Series([video.generate_href(),\
                 video.score,\
                 video.generate_image_url(),\
                 remove_comments(video.generate_statistics_pie()).\
@@ -94,12 +96,12 @@ class Channel(object):
         return DataFrame(data).T.to_html(escape=False)
 
 
-
+@ls.speed_calculate
 def cache_channel(channel):
     """Cache channel analytics into a file."""
     pickle.dump(channel, open('cache/' + channel.name, 'wb'))
 
-
+@ls.speed_calculate
 def load_channel(name):
     """
     Load channel analytics.
@@ -111,8 +113,14 @@ def load_channel(name):
     return None
 
 
-    
+@ls.speed_calculate
 def remove_comments(string):
+    """
+    Remove comments from javascript code.
+
+    Identifies /* */ and // comments and removes them correctly.
+    Handles situation when these letters appear inside strings.
+    """
     pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
     # first group captures quoted strings (double or single)
     # second group captures comments (//single-line or /* multi-line */)
@@ -126,7 +134,3 @@ def remove_comments(string):
             return match.group(1) # captured quoted-string
     return regex.sub(_replacer, string)
 
-
-if __name__ == "__main__":
-    CHANNEL_ = load_channel("nigahiga")
-    CHANNEL_.generate_table()
