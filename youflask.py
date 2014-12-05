@@ -68,9 +68,8 @@ def calculate_video_score(video_id):
 
     1.Retrieving comments
     2.Tokenizing comments
-    3.Lemmatizing comments
-    4.clearing stop words from comments
-    5.calculating the actual score
+    3.clearing stop words from comments
+    4.calculating the actual score
 
     Keyword arguments:
     video_id -- a string representing the video id
